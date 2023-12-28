@@ -18,7 +18,7 @@ class Event(models.Model):
     event_end_time = models.TimeField()
     event_location = models.CharField(max_length=255)
 
-    def _str_(self):
+    def __str__(self):
         return self.event_name
 
 

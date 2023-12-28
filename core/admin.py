@@ -53,3 +53,13 @@ class EventAdmin(ImportExportModelAdmin):
         "event_end_time",
         "event_location",
     ]
+
+
+@admin.register(EventRegistration)
+class EventRegistrationAdmin(admin.ModelAdmin):
+    list_display = [
+        "event",
+        "registration",
+        "present",
+        "can_attend_multiple",
+    ]

@@ -36,7 +36,7 @@ class Registration(models.Model):
     batch_year = models.IntegerField(null=True, blank=True)
     mobile_no = models.CharField(max_length=15, null=True, blank=True)
     tshirt_size = models.CharField(max_length=3, null=True, choices=TshirtSize.choices)
-    events = models.ManyToManyField(Event, blank=True)  # Adding the ManyToManyField
+    # events = models.ManyToManyField(Event, blank=True)  # Adding the ManyToManyField
 
     registration = models.BooleanField(default=False, null=True, blank=True)
     kit = models.BooleanField(default=False)
@@ -60,3 +60,13 @@ def save_qr_code(sender, created, instance, **kwargs):
         image = File(image_stream, name=f"{instance.id}.png")
 
         instance.barcode.save(f"{instance.id}.png", image)
+
+
+class EventRegistration(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    registration = models.ForeignKey(Registration, on_delete=models.CASCADE)
+    present = models.BooleanField(default=False)
+    can_attend_multiple = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.event}-{self.registration}"

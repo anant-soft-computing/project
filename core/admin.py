@@ -11,5 +11,5 @@ class RegistrationAdmin(ImportExportModelAdmin):
 
 
 @admin.register(Event)
-class EventAdmin(admin.ModelAdmin):
+class EventAdmin(ImportExportModelAdmin):
     pass

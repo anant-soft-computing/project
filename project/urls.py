@@ -3,10 +3,11 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
-from core.views import UserEvents
+from core.views import ConfirmPresentView, UserEvents
 
 urlpatterns = [
     path("api/<str:id>/userevents", UserEvents.as_view()),
+    path("api/<str:user_id>/<int:event_id>/confirm", ConfirmPresentView.as_view()),
     path("admin/", admin.site.urls),
 ]
 

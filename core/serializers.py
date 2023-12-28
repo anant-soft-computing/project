@@ -6,10 +6,7 @@ from .models import Event, EventRegistration, Registration
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        fields = (
-            "id",
-            "event_name",
-        )
+        fields = "__all__"
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -21,4 +18,12 @@ class RegistrationSerializer(serializers.ModelSerializer):
 class EventRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventRegistration
-        fields = "__all__"
+        fields = (
+            "id",
+            "event",
+        )
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["event"] = instance.event.event_name
+        return data

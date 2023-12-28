@@ -63,10 +63,18 @@ def save_qr_code(sender, created, instance, **kwargs):
 
 
 class EventRegistration(models.Model):
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="events")
-    registration = models.ForeignKey(Registration, on_delete=models.CASCADE)
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+    )
+    registration = models.ForeignKey(
+        Registration, on_delete=models.CASCADE, related_name="events"
+    )
     present = models.BooleanField(default=False)
     can_attend_multiple = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.event}-{self.registration}"
+
+    class Meta:
+        unique_together = ("event", "registration")

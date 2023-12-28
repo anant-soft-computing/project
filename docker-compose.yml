@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  backend:
+    build: .
+    restart: on-failure
+    container_name: project-d
+    ports:
+      - "9000:9000"
+    # command: sh -c "gunicorn --config gunicorn_config.py /app/powercrm.wsgi:application"
+    expose:
+      - "9000"
+    volumes:
+      - ./:/app
+      - staticfiles-d:/var/www/static/
+      - media-d:/var/www/media/
+      - /var/certbot/conf:/etc/letsencrypt/:ro
+    # env_file:
+    #   - ./.env
+    # environment:
+    #   - STATIC_ROOT=/var/www/static/
+
+    # depends_on:
+    #   - postgres_db
+    # command: ["./wait-for-it.sh", "postgres_db:5432", "--", "./entrypoint.sh"]
+
+volumes:
+  staticfiles-d:
+  media-d:

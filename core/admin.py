@@ -7,7 +7,8 @@ from .models import Event, Registration
 
 @admin.register(Registration)
 class RegistrationAdmin(ImportExportModelAdmin):
-    pass
+    list_display = ["id", "name", "category", "batch_year", "mobile_no", "tshirt_size"]
+    list_filter = ["category", "batch_year", "tshirt_size", "id"]
 
 
 @admin.register(Event)

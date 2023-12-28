@@ -45,8 +45,8 @@ class Registration(models.Model):
     lapel_pin = models.BooleanField(default=False)
     barcode = models.ImageField(upload_to="images", null=True, blank=True)
 
-    # def _str_(self):
-    #     return self.name
+    def _str_(self):
+        return self.name
 
 
 @receiver(post_save, sender=Registration)

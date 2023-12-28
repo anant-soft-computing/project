@@ -63,3 +63,5 @@ class EventRegistrationAdmin(admin.ModelAdmin):
         "present",
         "can_attend_multiple",
     ]
+
+    list_filter = ["registration__name", "event", "present", "can_attend_multiple"]

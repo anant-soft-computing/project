@@ -20,6 +20,8 @@ class EventRegistrationInline(admin.TabularInline):
 
 @admin.register(Registration)
 class RegistrationAdmin(ImportExportModelAdmin):
+    ordering = ["-date_created"]
+    date_hierarchy = "date_created"
     inlines = [EventRegistrationInline]
     list_display = [
         "id",
@@ -29,6 +31,8 @@ class RegistrationAdmin(ImportExportModelAdmin):
         "mobile_no",
         "tshirt_size",
         "barcode",
+        "date_created",
+        "date_updated",
     ]
     list_filter = [
         "id",

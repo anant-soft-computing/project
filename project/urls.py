@@ -6,9 +6,13 @@ from django.urls import path
 from core.views import ConfirmPresentView, UserEvents
 
 urlpatterns = [
-    path("api/<str:id>/userevents", UserEvents.as_view()),
-    path("api/<str:user_id>/<int:event_id>/confirm", ConfirmPresentView.as_view()),
-    path("admin/", admin.site.urls),
+    path("api/<str:id>/userevents", UserEvents.as_view(), name="userevents"),
+    path(
+        "api/<str:user_id>/<int:event_id>/confirm",
+        ConfirmPresentView.as_view(),
+        name="confirm",
+    ),
+    path("admin/", admin.site.urls, name="admin"),
 ]
 
 if settings.DEBUG:

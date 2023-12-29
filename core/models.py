@@ -44,6 +44,8 @@ class Registration(models.Model):
     cap = models.BooleanField(default=False)
     lapel_pin = models.BooleanField(default=False)
     barcode = models.ImageField(upload_to="images", null=True, blank=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
 
     def _str_(self):
         return self.name
@@ -72,6 +74,7 @@ class EventRegistration(models.Model):
     )
     present = models.BooleanField(default=False)
     can_attend_multiple = models.BooleanField(default=False)
+    attend_event_count = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.event}-{self.registration}"

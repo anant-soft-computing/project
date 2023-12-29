@@ -6,8 +6,6 @@ from django.db import models
 
 # Create your models here.
 # Create your models here.
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 
 class Event(models.Model):
@@ -50,18 +48,15 @@ class Registration(models.Model):
     def _str_(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if self._state.adding is True:
+            code = qrcode.make(str(self.pk))
+            blob = BytesIO()
+            code.save(blob, format="PNG")
+            blob.seek(0)
+            self.barcode.save(f"{self.pk}.png", File(blob), save=False)
 
-@receiver(post_save, sender=Registration)
-def save_qr_code(sender, created, instance, **kwargs):
-    if created:
-        code = qrcode.make(str(instance.id))
-        image_stream = BytesIO()
-        code.save(image_stream, format="PNG")
-        image_stream.seek(0)
-
-        image = File(image_stream, name=f"{instance.id}.png")
-
-        instance.barcode.save(f"{instance.id}.png", image)
+        return super().save(*args, **kwargs)
 
 
 class EventRegistration(models.Model):

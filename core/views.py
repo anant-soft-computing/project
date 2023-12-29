@@ -9,6 +9,10 @@ from .serializers import EventRegistrationSerializer
 
 
 class UserEvents(APIView):
+    """
+    The UserEvents class is an API view
+    that retrieves the events registered by a user with a given ID."""
+
     def get(self, request, id, format=None):
         try:
             user = Registration.objects.get(id=id)
@@ -20,15 +24,19 @@ class UserEvents(APIView):
 
 
 class ConfirmPresentView(APIView):
+    """
+    The `ConfirmPresentView` class is an API view that allows a user to confirm their presence at an
+    event they are registered for."""
+
     def get(self, request, user_id, event_id, format=None):
         try:
             user = Registration.objects.get(id=user_id)
         except Registration.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        if user.events.filter(id=event_id).exists():
-            event = user.events.get(id=event_id)
-            event_data = event.event
+        if user.events.filter(event__id=event_id).exists():
+            EventRegistration_instance = user.events.get(event__id=event_id)
+            event_data = EventRegistration_instance.event
 
             if event_data.event_start_date > timezone.now().date():
                 return Response(
@@ -40,21 +48,27 @@ class ConfirmPresentView(APIView):
                     "The event has already ended",
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+            else:
+                if (
+                    not EventRegistration_instance.present
+                    and not EventRegistration_instance.can_attend_multiple
+                ):
+                    EventRegistration_instance.present = True
+                    EventRegistration_instance.save()
 
-            if not event.present and not event.can_attend_multiple:
-                event.present = True
-                event.save()
+                elif (
+                    EventRegistration_instance.present
+                    and not EventRegistration_instance.can_attend_multiple
+                ):
+                    return Response(
+                        "You already have attended this event",
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                elif EventRegistration_instance.can_attend_multiple:
+                    EventRegistration_instance.present = True
+                    EventRegistration_instance.save()
 
-            elif event.present and not event.can_attend_multiple:
-                return Response(
-                    "You already have attended this event",
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            elif event.can_attend_multiple:
-                event.present = True
-                event.save()
-
-            return Response(status=status.HTTP_200_OK)
+                return Response(status=status.HTTP_200_OK)
 
         else:
             return Response(

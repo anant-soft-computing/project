@@ -19,7 +19,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     def get_events(self, obj):
         return obj.events.all().values(
-            eventname=F("event__event_name"), eventid=F("event__id")
+            "attend_event_count",
+            eventname=F("event__event_name"),
+            eventid=F("event__id"),
         )
 
 

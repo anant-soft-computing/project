@@ -49,30 +49,20 @@ class ConfirmPresentView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # elif (
-            #     (event_data.event_start_date == timezone.localtime().date())
-            #     and (timezone.localtime().time() > event_data.event_start_time)
-            #     and (timezone.localtime().time() < event_data.event_start_time)
-            # ):
-            #     return Response(
-            #         "The event has not started yet",
-            #         status=status.HTTP_400_BAD_REQUEST,
-            #     )
-            # elif (event_data.event_end_date == timezone.localtime().date()) and (
-            #     event_data.event_end_time < timezone.localtime().time()
-            # ):
-            #     return Response(
-            #         "The event has already ended",
-            #         status=status.HTTP_400_BAD_REQUEST,
-            #     )
-
-            else:
+            elif (
+                (event_data.event_start_date == timezone.localtime().date())
+                and (timezone.localtime().time() >= event_data.event_start_time)
+                and (timezone.localtime().time() < event_data.event_end_time)
+            ):
                 if (
                     not EventRegistration_instance.present
                     and not EventRegistration_instance.can_attend_multiple
                 ):
                     EventRegistration_instance.present = True
+                    EventRegistration_instance.attend_event_count += 1
                     EventRegistration_instance.save()
+
+                    return Response(status=status.HTTP_200_OK)
 
                 elif (
                     EventRegistration_instance.present
@@ -82,11 +72,13 @@ class ConfirmPresentView(APIView):
                         "You already have attended this event",
                         status=status.HTTP_400_BAD_REQUEST,
                     )
+
                 elif EventRegistration_instance.can_attend_multiple:
                     EventRegistration_instance.present = True
+                    EventRegistration_instance.attend_event_count += 1
                     EventRegistration_instance.save()
 
-                return Response(status=status.HTTP_200_OK)
+                    return Response(status=status.HTTP_200_OK)
 
         else:
             return Response(
@@ -95,18 +87,24 @@ class ConfirmPresentView(APIView):
             )
 
 
-# def user_events(request, user_id, event_id):
-#     try:
-#         user = Registration.objects.get(id=user_id)
-#     except Registration.DoesNotExist:
-#         return Response(status=status.HTTP_404_NOT_FOUND)
+class ConfirmAuditoriumAndREGView(APIView):
+    def get(self, request, user_id, event_id, format=None):
+        try:
+            user = Registration.objects.get(id=user_id)
+        except Registration.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-#     if user.events.filter(event__id=event_id).exists():
-#         EventRegistration_instance = user.events.get(event__id=event_id)
-#         event_data = EventRegistration_instance.event
+        if user.events.filter(event__id=event_id).exists():
+            EventRegistration_instance = user.events.get(event__id=event_id)
 
-#         if (
-#             (event_data.event_start_date == timezone.localtime().date())
-#             and (timezone.localtime().time() >= event_data.event_start_time)
-#             and (timezone.localtime().time() < event_data.event_end_time)
-#         ):
+            EventRegistration_instance.present = True
+            EventRegistration_instance.attend_event_count += 1
+            EventRegistration_instance.save()
+
+            return Response(status=status.HTTP_200_OK)
+
+        else:
+            return Response(
+                "You are not registered for this event.",
+                status=status.HTTP_404_NOT_FOUND,
+            )

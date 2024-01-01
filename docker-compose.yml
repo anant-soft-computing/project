@@ -7,7 +7,7 @@ services:
     container_name: doctor
     # command: sh -c "gunicorn --config gunicorn_config.py /app/powercrm.wsgi:application"
     expose:
-      - "8080"
+      - "8000"
     volumes:
       - ./:/app
       - staticfiles:/var/www/static/

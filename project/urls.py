@@ -3,16 +3,17 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
-from core.views import ConfirmPresentView, UserEvents
+from core.views import ConfirmPresentView, RegistrationView
 
 urlpatterns = [
-    path("api/<str:id>/userevents", UserEvents.as_view(), name="userevents"),
+    path("api/<str:id>/userevents", RegistrationView.as_view(), name="userevents"),
     path(
         "api/<str:user_id>/<int:event_id>/confirm",
         ConfirmPresentView.as_view(),
         name="confirm",
     ),
     path("admin/", admin.site.urls, name="admin"),
+    path("api/reg/", RegistrationView.as_view(), name="reg"),
 ]
 
 if settings.DEBUG:

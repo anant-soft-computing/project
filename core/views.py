@@ -1,11 +1,27 @@
 # class Perform
 from django.utils import timezone
-from rest_framework import generics, status
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Registration
-from .serializers import RegistrationSerializer
+from .serializers import EventRegistrationSerializer, RegistrationSerializer
+
+
+class UserEvents(APIView):
+    """
+    The UserEvents class is an API view
+    that retrieves the events registered by a user with a given ID."""
+
+    def get(self, request, id, format=None):
+        try:
+            user = Registration.objects.get(id=id)
+        except Registration.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = EventRegistrationSerializer(user.events.all(), many=True)
+        serializer1 = RegistrationSerializer(user)
+        return Response({"Events": serializer.data, "Registrations": serializer1.data})
 
 
 class ConfirmPresentView(APIView):
@@ -60,8 +76,3 @@ class ConfirmPresentView(APIView):
                 "You are not registered for this event.",
                 status=status.HTTP_404_NOT_FOUND,
             )
-
-
-class RegistrationView(generics.RetrieveAPIView):
-    serializer_class = RegistrationSerializer
-    queryset = Registration.objects.all()

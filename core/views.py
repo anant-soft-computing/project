@@ -38,16 +38,34 @@ class ConfirmPresentView(APIView):
             EventRegistration_instance = user.events.get(event__id=event_id)
             event_data = EventRegistration_instance.event
 
-            if event_data.event_start_date > timezone.now().date():
+            if event_data.event_start_date > timezone.localtime().date():
                 return Response(
                     "The event has not started yet",
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            elif event_data.event_end_date < timezone.now().date():
+            elif event_data.event_end_date < timezone.localtime().date():
                 return Response(
                     "The event has already ended",
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
+            # elif (
+            #     (event_data.event_start_date == timezone.localtime().date())
+            #     and (timezone.localtime().time() > event_data.event_start_time)
+            #     and (timezone.localtime().time() < event_data.event_start_time)
+            # ):
+            #     return Response(
+            #         "The event has not started yet",
+            #         status=status.HTTP_400_BAD_REQUEST,
+            #     )
+            # elif (event_data.event_end_date == timezone.localtime().date()) and (
+            #     event_data.event_end_time < timezone.localtime().time()
+            # ):
+            #     return Response(
+            #         "The event has already ended",
+            #         status=status.HTTP_400_BAD_REQUEST,
+            #     )
+
             else:
                 if (
                     not EventRegistration_instance.present
@@ -75,3 +93,20 @@ class ConfirmPresentView(APIView):
                 "You are not registered for this event.",
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+
+# def user_events(request, user_id, event_id):
+#     try:
+#         user = Registration.objects.get(id=user_id)
+#     except Registration.DoesNotExist:
+#         return Response(status=status.HTTP_404_NOT_FOUND)
+
+#     if user.events.filter(event__id=event_id).exists():
+#         EventRegistration_instance = user.events.get(event__id=event_id)
+#         event_data = EventRegistration_instance.event
+
+#         if (
+#             (event_data.event_start_date == timezone.localtime().date())
+#             and (timezone.localtime().time() >= event_data.event_start_time)
+#             and (timezone.localtime().time() < event_data.event_end_time)
+#         ):

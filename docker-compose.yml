@@ -1,28 +1,36 @@
 version: '3.8'
 services:
+
   backend:
     build: .
     restart: on-failure
-    container_name: project-d
-    ports:
-      - "9000:9000"
+    container_name: doctor
     # command: sh -c "gunicorn --config gunicorn_config.py /app/powercrm.wsgi:application"
     expose:
-      - "9000"
+      - "8080"
     volumes:
       - ./:/app
-      - staticfiles-d:/var/www/static/
-      - media-d:/var/www/media/
-      - /var/certbot/conf:/etc/letsencrypt/:ro
-    # env_file:
-    #   - ./.env
-    # environment:
-    #   - STATIC_ROOT=/var/www/static/
+      - staticfiles:/var/www/static/
+      - media:/var/www/media/
+    env_file:
+      - ./.env
+    environment:
+      - STATIC_ROOT=/var/www/static/
 
-    # depends_on:
-    #   - postgres_db
-    # command: ["./wait-for-it.sh", "postgres_db:5432", "--", "./entrypoint.sh"]
 
+  nginx:
+    build: ./nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+      # - "443:443"
+    volumes:
+      - staticfiles:/home/app/staticfiles/
+      - media:/home/app/media/
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./front/:/home/studystreak/
+    depends_on:
+      - backend
 volumes:
-  staticfiles-d:
-  media-d:
+  staticfiles:
+  media:

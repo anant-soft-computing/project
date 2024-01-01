@@ -133,3 +133,9 @@ MEDIA_URL = "media/"
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_ORIGINS_ALL = True
+
+
+STATIC_URL = "staticfiles/"
+STATIC_ROOT = "/var/www/static/"
+MEDIA_ROOT = "/var/www/media/"
+MEDIA_URL = "media/"

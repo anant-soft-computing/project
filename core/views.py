@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Registration
-from .serializers import EventRegistrationSerializer, RegistrationSerializer
+from .serializers import RegistrationSerializer
 
 
 class UserEvents(APIView):
@@ -19,9 +19,8 @@ class UserEvents(APIView):
         except Registration.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        serializer = EventRegistrationSerializer(user.events.all(), many=True)
-        serializer1 = RegistrationSerializer(user)
-        return Response({"Events": serializer.data, "Registrations": serializer1.data})
+        serializer = RegistrationSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ConfirmPresentView(APIView):

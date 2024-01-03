@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Registration
-from .serializers import RegistrationSerializer
+from .serializers import RegistrationSerializer, EventRegistrationSerializer
 
 
 class UserEvents(APIView):
@@ -108,3 +108,18 @@ class ConfirmAuditoriumAndREGView(APIView):
                 "You are not registered for this event.",
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+class UpdateRegistrationView(APIView):
+    def post(self, request, id, format=None):
+        try:
+            registration = Registration.objects.get(id=id)
+        except Registration.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = RegistrationSerializer(registration, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

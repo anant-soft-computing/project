@@ -3,7 +3,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
-from core.views import ConfirmAuditoriumAndREGView, ConfirmPresentView, UserEvents
+from core.views import ConfirmAuditoriumAndREGView, ConfirmPresentView, UserEvents, UpdateRegistrationView
 
 urlpatterns = [
     path("api/<str:id>/userevents", UserEvents.as_view(), name="userevents"),
@@ -18,6 +18,7 @@ urlpatterns = [
         ConfirmAuditoriumAndREGView.as_view(),
         name="audit-reg",
     ),
+    path('api/update-registration/<str:id>/', UpdateRegistrationView.as_view(), name='update-event-registration'),
 ]
 
 if settings.DEBUG:

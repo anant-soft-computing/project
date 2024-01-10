@@ -8,15 +8,11 @@ from .models import Event, EventRegistration, Registration
 
 
 class EventRegistrationInline(admin.TabularInline):
-    """Tabular Inline View for EventRegistration"""
-
     model = EventRegistration
     min_num = 1
     extra = 1
     fk_name = "registration"
     readonly_fields = ["present"]
-    # raw_id_fields = (,)
-
 
 @admin.register(Registration)
 class RegistrationAdmin(ImportExportModelAdmin):
@@ -40,12 +36,10 @@ class RegistrationAdmin(ImportExportModelAdmin):
         "batch_year",
         "tshirt_size",
     ]
-
     list_per_page = 20
     readonly_fields = [
         "barcode",
     ]
-
 
 @admin.register(Event)
 class EventAdmin(ImportExportModelAdmin):
@@ -58,9 +52,8 @@ class EventAdmin(ImportExportModelAdmin):
         "event_location",
     ]
 
-
 @admin.register(EventRegistration)
-class EventRegistrationAdmin(admin.ModelAdmin):
+class EventRegistrationAdmin(ImportExportModelAdmin):
     list_display = [
         "event",
         "registration",
